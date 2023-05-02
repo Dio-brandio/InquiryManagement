@@ -13,7 +13,6 @@ const allBranchApi = process.env.API_ROUTE+'getAllBranches';
 export default function App({ Component, pageProps }) {
   const router = useRouter()
   const allbranches =async()=>{
-    console.log("start fetching");
     const response = await fetch(process.env.API_ROUTE+"getAllBranches");
     const branches = await response.json();
     return branches.branches[0]

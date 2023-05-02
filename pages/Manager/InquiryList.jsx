@@ -1,9 +1,8 @@
 import AdminInquiryList from "../Admin/InquiryList"
 
-const ManagerInquiryList = () => {
+const ManagerInquiryList = (props) => {
     return (
-     <AdminInquiryList/>
-    )
+     <AdminInquiryList {...props}/>    )
 }
 
 export default ManagerInquiryList

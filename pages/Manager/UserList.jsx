@@ -1,8 +1,8 @@
 import AdminUserList from "../Admin/UserList"
 
-const ManagerUserList = () => {
+const ManagerUserList = (props) => {
     return (
-        <AdminUserList />
+        <AdminUserList {...props}/>
     )
 }
 
