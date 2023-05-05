@@ -11,7 +11,6 @@ const updateUserApi = 'http://localhost:3000/api/updateUser/';
 const AdminAddUser = (props) => {
     return (<>
         <Layout>
-          
             <div className="row">
                 <div className="col">
                     <div className="card">
@@ -21,11 +20,7 @@ const AdminAddUser = (props) => {
                             </h3>
                         </div>
                         <div className="card-body pt-4 p-3 d-flex justify-content-center align-items-center flex-column">
-                        <Suspense fallback={<h1>Loading...</h1>}>
                                     <AddUserForm {...props}/>
-                        </Suspense>
-                           
-
                         </div>
                     </div>
                 </div>

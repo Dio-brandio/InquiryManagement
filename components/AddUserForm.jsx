@@ -2,16 +2,18 @@ import React, { useState, useEffect, useRef } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import { extractDataFeilds } from '@/middleware';
 import axios from 'axios';
+import useSWR from 'swr';
 import Head from 'next/head';
+import Loading from './Loading';
 
 
 const updateUserApi = process.env.API_ROUTE + "updateUser/"
 const addUserApi = process.env.API_ROUTE + "addUser"
 
 const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
-  const [selectedUser, setSelectedUser] = useState({})
-  const [branches, setbranches] = useState(null)
-  const [loading, setLoading] = useState(isUpdate)
+  // const [selectedUser, setSelectedUser] = useState({})
+  // const [branches, setbranches] = useState(null)
+  // const [loading, setLoading] = useState(isUpdate)
   const fnameRef = useRef()
   const lnameRef = useRef()
   const emailRef = useRef()
@@ -20,44 +22,37 @@ const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
   const contactRef = useRef()
   const passwordRef = useRef()
 
-  useEffect(() => {
-    if ((id != null || id != undefined) && isUpdate) {
-
-      const getUserByIdApi = process.env.API_ROUTE+`getAllUsers?id=${id}`
-      const fethAllUsers = async () => {
-        try {
-          const fetcheddata = await axios.get(getUserByIdApi)
-          if (fetcheddata.data.ok) {
-            setSelectedUser(fetcheddata.data.users[0][0] == undefined ? {} : fetcheddata.data.users[0][0])
-          }
-          else {
-            setSelectedUser({})
-          }
-        } catch(err) {
-         setSelectedUser({})
-        }
-
-        setLoading(false)
-
-      }
-      fethAllUsers()
-
-    }
-    const setBranches = async () => {
-      setbranches(await allbranches())
-
-    }
-    setBranches()
-  }, [id])
-  if (Object.keys(selectedUser).length > 0 && !loading) {
-    fnameRef.current.value = selectedUser.fname
-    lnameRef.current.value = selectedUser.lname
-    contactRef.current.value = selectedUser.contact
-    emailRef.current.value = selectedUser.email
-    passwordRef.current.value = selectedUser.password
-    branchRef.current.value = selectedUser.branchid
-    roleRef.current.value = selectedUser.role
+  const fethAllUsers = async () => {
+    const { data } = await axios.get(process.env.API_ROUTE + "getAllUsers")
+    return data.users[0][0]
   }
+  const branchData = useSWR("fetchBranches",allbranches)
+  if (isUpdate){
+    const userData = useSWR("fetchUsers", fethAllUsers)
+    if (!userData.data) return <><Loading />  <Head><title>Loading...</title></Head></>
+    if (userData.error) return <h3>Error:- {userData.error.message}</h3>
+
+    if (Object.keys(userData.data).length< 1) {
+      return (<>
+        <Head>
+          <title>404</title>
+        </Head>
+        <h2 className='text-secondary'>Not Available</h2>
+      </>)
+    }
+    if (Object.keys(userData.data).length > 0) {
+
+      fnameRef.current.value = userData.data.fname
+      lnameRef.current.value = userData.data.lname
+      contactRef.current.value = userData.data.contact
+      emailRef.current.value = userData.data.email
+      passwordRef.current.value = userData.data.password
+      branchRef.current.value = userData.data.branchid
+      roleRef.current.value = userData.data.role
+    }
+  }
+
+
 
   const addUserOrrUpdateUserApiCall = async (update) => {
     if (!formValidation()) {
@@ -128,14 +123,8 @@ const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
     }
     return true
   }
-  if (Object.keys(selectedUser).length < 1 && !loading && isUpdate) {
-    return (<>
-      <Head>
-        <title>404</title>
-      </Head>
-      <h2 className='text-secondary'>Not Available</h2>
-    </>)
-  }
+
+
   return (<>
     <ToastContainer
       position="top-center"
@@ -151,9 +140,8 @@ const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
       theme="colored"
     />
 
-    {loading ? <p className='text-primary'>Loading...</p> : null}
     <Head>
-      <title>{loading ? "Loading" : isUpdate ? "Edit-" + selectedUser.fname : "Add New User"}</title>
+      <title>{isUpdate ? "Edit-" + selectedUser.fname : "Add New User"}</title>
     </Head>
     <form className="form-card" id='adduserForm'>
       <div className="row">
@@ -209,11 +197,11 @@ const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
                 </div>
                 <select className="form-select" aria-label="Default select example" name='branchid' id='branchid'
                   ref={branchRef}>
-                  {branches ? branches.length >= 1 ? branches.map((branch) => {
+                  {branchData.data? branchData.data.length >= 1 ? branchData.data.map((branch) => {
                     return <option value={branch.id} key={branch.id}>
                       {branch.name}
                     </option>
-                  }) : <p>No branches</p> : <option>Loading</option>}
+                  }) : <p>No branchData</p> : <option>Loading</option>}
                 </select>
               </div>
             </div>
@@ -251,7 +239,7 @@ const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
                 <div className="">
                   <button type="button" onClick={() => { addUserOrrUpdateUserApiCall(isUpdate) }}
                     className="btn btn-primary btn-block mb-4" disabled={isUpdate && !(Object.keys(selectedUser).length > 0 && !loading)}>
-                    {loading ? "Loading" : isUpdate ? Object.keys(selectedUser).length > 0 ? "Update" : "No User Found" : "Submit"}
+                    { isUpdate ? Object.keys(selectedUser).length > 0 ? "Update" : "No User Found" : "Submit"}
                   </button>
                 </div>
               </div>

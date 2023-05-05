@@ -6,6 +6,7 @@ const AdminUpdateInquiry = (props) => {
     const router = useRouter()
   const {id} = router.query
   return (
+    
      <AdminAddInquiry {...props} isUpdate={true} id={id}/>
   )
 }

@@ -13,43 +13,21 @@ const Sidebar = () => {
     const isAdmin = router.pathname.includes("/Admin")
     const isManager = router.pathname.includes("/Manager")
     const userPath = isAdmin ? "Admin" : isManager ? "Manager" : "Employee"
-    const logout = () => {
-        Cookies.remove("authtoken")
-        toast.error('Logging Out', {
-            position: "top-center",
-            autoClose: 1000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-        });
-        setTimeout(() => {
-            router.push('/login')
-        }, 1000);
+   
+    
+    const closeNavbar = ()=>{
+        $("#sidenav-main").addClass('left-100')
     }
     return (
         <>
-            <ToastContainer
-                position="top-center"
-                autoClose={1000}
-                hideProgressBar
-                newestOnTop
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="colored"
-            />
+        
             <div className="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 ps" id="sidenav-main">
                 <div className="sidenav-header d-flex gap-3 align-items-center">
                     <Link className="navbar-brand m-0 d-flex align-items-center justify-content-around" href={`/${userPath}`} >
                         <img src="/assets/img/logo-ct-dark.png" className="navbar-brand-img h-100" alt="main_logo" />
                         <span className="ms-1 font-weight-bold">Inquiry App</span>
                     </Link>
-                    <i className="ni ni-fat-remove fs-1 cursor-pointer" id='closeSideNav'></i>
+                    <i className="ni ni-fat-remove fs-1 cursor-pointer" id='closeSideNav' onClick={closeNavbar}></i>
 
                 </div>
                 <hr className="horizontal dark mt-0" />
@@ -112,11 +90,7 @@ const Sidebar = () => {
                                 <span className="nav-link-text ms-1">BranchList</span>
                             </Link>
                         </li>:null}
-                        <li className="nav-item text-center my-5">
-                            <button className="btn btn-danger " onClick={logout}>
-                                <span className="nav-link-text ms-1">Logout</span>
-                            </button>
-                        </li>
+                    
                     </ul>
                 </div>
             </div>
