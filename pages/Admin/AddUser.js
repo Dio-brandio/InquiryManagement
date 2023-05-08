@@ -9,7 +9,7 @@ const addUserApi = 'http://localhost:3000/api/addUser';
 const updateUserApi = 'http://localhost:3000/api/updateUser/';
 
 const AdminAddUser = (props) => {
-    return (<>
+        return (<>
         <Layout>
             <div className="row">
                 <div className="col">
