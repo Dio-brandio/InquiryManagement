@@ -5,7 +5,7 @@ const AdminUpdateUser = (props) => {
     const router = useRouter()
     const {id} = router.query
   return (
-     <AdminAddUser isUpdate={true} id={id} {...props}/>
+     <AdminAddUser {...props} isUpdate={true} id={id} />
   )
 }
 

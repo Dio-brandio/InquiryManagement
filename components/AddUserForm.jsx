@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, {  useRef } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import { extractDataFeilds } from '@/middleware';
 import axios from 'axios';
@@ -14,46 +14,8 @@ const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
   // const [selectedUser, setSelectedUser] = useState({})
   // const [branches, setbranches] = useState(null)
   // const [loading, setLoading] = useState(isUpdate)
-  const fnameRef = useRef()
-  const lnameRef = useRef()
-  const emailRef = useRef()
-  const branchRef = useRef()
-  const roleRef = useRef()
-  const contactRef = useRef()
-  const passwordRef = useRef()
-
-  const fethAllUsers = async () => {
-    const { data } = await axios.get(process.env.API_ROUTE + "getAllUsers")
-    return data.users[0][0]
-  }
-  const branchData = useSWR("fetchBranches",allbranches)
-  if (isUpdate){
-    const userData = useSWR("fetchUsers", fethAllUsers)
-    if (!userData.data) return <><Loading />  <Head><title>Loading...</title></Head></>
-    if (userData.error) return <h3>Error:- {userData.error.message}</h3>
-
-    if (Object.keys(userData.data).length< 1) {
-      return (<>
-        <Head>
-          <title>404</title>
-        </Head>
-        <h2 className='text-secondary'>Not Available</h2>
-      </>)
-    }
-    if (Object.keys(userData.data).length > 0) {
-
-      fnameRef.current.value = userData.data.fname
-      lnameRef.current.value = userData.data.lname
-      contactRef.current.value = userData.data.contact
-      emailRef.current.value = userData.data.email
-      passwordRef.current.value = userData.data.password
-      branchRef.current.value = userData.data.branchid
-      roleRef.current.value = userData.data.role
-    }
-  }
-
-
-
+  let userData=null;
+  
   const addUserOrrUpdateUserApiCall = async (update) => {
     if (!formValidation()) {
       toast.warn('Fill All The Required Values !', {
@@ -125,6 +87,36 @@ const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
   }
 
 
+  const fethAllUsers = async () => {
+    const { data } = await axios.get(process.env.API_ROUTE + "getAllUsers")
+    return data.users[0][0]
+  }
+  const branchData = useSWR("fetchBranches",allbranches)
+  if (isUpdate){
+     userData = useSWR("fetchUsers", fethAllUsers)
+    if (!userData.data) return <><Loading />  <Head><title>Loading...</title></Head></>
+    if (userData.error) return <h3>Error:- {userData.error.message}</h3>
+
+    if (Object.keys(userData.data).length< 1) {
+      return (<>
+        <Head>
+          <title>404</title>
+        </Head>
+        <h2 className='text-secondary'>Not Available</h2>
+      </>)
+    }
+    // if (Object.keys(userData.data).length > 0) {
+    //   fnameRef.current.value = userData.data.fname
+    //   lnameRef.current.value = userData.data.lname
+    //   contactRef.current.value = userData.data.contact
+    //   emailRef.current.value = userData.data.email
+    //   passwordRef.current.value = userData.data.password
+    //   branchRef.current.value = userData.data.branchid
+    //   roleRef.current.value = userData.data.role
+    // }
+  }
+
+
   return (<>
     <ToastContainer
       position="top-center"
@@ -141,7 +133,7 @@ const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
     />
 
     <Head>
-      <title>{isUpdate ? "Edit-" + selectedUser.fname : "Add New User"}</title>
+      <title>{isUpdate ? "Edit-" + userData.data.fname : "Add New User"}</title>
     </Head>
     <form className="form-card" id='adduserForm'>
       <div className="row">
@@ -167,7 +159,7 @@ const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
               <div className="form-outline">
                 <label className="form-label" htmlFor="">First name<span className="text-danger"> * </span></label>
                 <input type="text" id="fname" className="form-control" name='fname' required
-                  ref={fnameRef}
+                  defaultValue={userData?userData.data.fname:null}
                 />
               </div>
             </div>
@@ -176,7 +168,7 @@ const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
               <div className="form-outline">
                 <label className="form-label" htmlFor="form6Example2">Last name<span className="text-danger"> * </span></label>
                 <input type="text" id="lname" className="form-control" name='lname' required
-                  ref={lnameRef}
+                 defaultValue={userData?userData.data.lname:null}
                 />
               </div>
             </div>
@@ -186,7 +178,7 @@ const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
                 <label className="form-label" htmlFor="form6Example2">Mobile<span className="text-danger"> * </span></label>
                 <input type="text" id="contact" className="form-control"
                   name='contact'
-                  ref={contactRef}
+                  defaultValue={userData?userData.data.contact:null}
                 />
               </div>
             </div>
@@ -196,7 +188,8 @@ const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
                 <div><label className="form-label" htmlFor="form6Example2">Branch<span className="text-danger">* </span></label>
                 </div>
                 <select className="form-select" aria-label="Default select example" name='branchid' id='branchid'
-                  ref={branchRef}>
+                  defaultValue={userData?userData.data.branch:null}
+                >
                   {branchData.data? branchData.data.length >= 1 ? branchData.data.map((branch) => {
                     return <option value={branch.id} key={branch.id}>
                       {branch.name}
@@ -210,7 +203,8 @@ const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
               <div className="form-outline">
                 <label className="form-label" htmlFor="">Email<span className="text-danger"> * </span></label>
                 <input type="email" id="email" className="form-control" name='email' required
-                  ref={emailRef} />
+                 defaultValue={userData?userData.data.email:null}
+                 />
               </div>
             </div>
 
@@ -218,7 +212,7 @@ const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
               <div className="form-outline">
                 <label className="form-label" htmlFor="">Password<span className="text-danger"> * </span></label>
                 <input type="password" id="password" className="form-control" name='password'
-                  ref={passwordRef} />
+                 defaultValue={userData?userData.data.password:null} />
               </div>
             </div>
 
@@ -228,7 +222,7 @@ const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
                 </div>
                 <select className="form-select" aria-label="Default select example" name='role'
                   id='role'
-                  ref={roleRef}>
+                  defaultValue={userData?userData.data.role:null}>
                   <option value="employee">Employee</option>
                   {isAdmin ? <option value="manager">Manager</option> : null}
                 </select>
@@ -238,8 +232,8 @@ const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
               <div className="col mt-2">
                 <div className="">
                   <button type="button" onClick={() => { addUserOrrUpdateUserApiCall(isUpdate) }}
-                    className="btn btn-primary btn-block mb-4" disabled={isUpdate && !(Object.keys(selectedUser).length > 0 && !loading)}>
-                    { isUpdate ? Object.keys(selectedUser).length > 0 ? "Update" : "No User Found" : "Submit"}
+                    className="btn btn-primary btn-block mb-4" disabled={isUpdate &&userData && !(Object.keys(userData.data).length > 0)}>
+                    { isUpdate && userData? Object.keys(userData.data).length > 0 ? "Update" : "No User Found" : "Submit"}
                   </button>
                 </div>
               </div>
