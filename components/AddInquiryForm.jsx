@@ -3,6 +3,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { extractDataFeilds } from '@/middleware'
 import axios from 'axios'
 import Head from 'next/head';
+import Loading from './Loading';
 
 const addInquiryApi = process.env.API_ROUTE+'addInquiry';
 const updateInquiryApi = process.env.API_ROUTE+'updateInquiry/';
@@ -13,17 +14,17 @@ const AddInquiryForm = ({ isUpdate, id, allbranches }) => {
   const [branches, setbranches] = useState(null)
   const [loading, setLoading] = useState(isUpdate)
 
-  const fnameRef = useRef()
-  const lnameRef = useRef()
-  const emailRef = useRef()
-  const branchRef = useRef()
-  const refrenceRef = useRef()
-  const contactRef = useRef()
-  const inquiry_date_Ref = useRef()
-  const upcoming_date_Ref = useRef()
-  const coursesRef = useRef()
-  const intrestedRef = useRef()
-  const feedbackRef = useRef()
+  // const fnameRef = useRef()
+  // const lnameRef = useRef()
+  // const emailRef = useRef()
+  // const branchRef = useRef()
+  // const refrenceRef = useRef()
+  // const contactRef = useRef()
+  // const inquiry_date_Ref = useRef()
+  // const upcoming_date_Ref = useRef()
+  // const coursesRef = useRef()
+  // const intrestedRef = useRef()
+  // const feedbackRef = useRef()
 
   useEffect(() => {
     if ((id != null || id != undefined) && isUpdate) {
@@ -46,18 +47,19 @@ const AddInquiryForm = ({ isUpdate, id, allbranches }) => {
     }
     setBranches()
   }, [id])
-  if (Object.keys(selectedInquiry).length>0 && isUpdate) {
-    fnameRef.current.value = selectedInquiry.fname
-    lnameRef.current.value = selectedInquiry.lname
-    emailRef.current.value = selectedInquiry.email
-    branchRef.current.value = selectedInquiry.branch
-    refrenceRef.current.value = selectedInquiry.refrence
-    contactRef.current.value = selectedInquiry.contact
-    inquiry_date_Ref.current.value = selectedInquiry.inquiry_date.split('T')[0]
-    upcoming_date_Ref.current.value = selectedInquiry.upcoming_date.split('T')[0]
-    coursesRef.current.value = selectedInquiry.course
-    intrestedRef.current.value = selectedInquiry.intrested
-    feedbackRef.current.value = selectedInquiry.feedback
+  if (loading) {
+    // fnameRef.current.value = selectedInquiry.fname
+    // lnameRef.current.value = selectedInquiry.lname
+    // emailRef.current.value = selectedInquiry.email
+    // branchRef.current.value = selectedInquiry.branch
+    // refrenceRef.current.value = selectedInquiry.refrence
+    // contactRef.current.value = selectedInquiry.contact
+    // inquiry_date_Ref.current.value = selectedInquiry.inquiry_date.split('T')[0]
+    // upcoming_date_Ref.current.value = selectedInquiry.upcoming_date.split('T')[0]
+    // coursesRef.current.value = selectedInquiry.course
+    // intrestedRef.current.value = selectedInquiry.intrested
+    // feedbackRef.current.value = selectedInquiry.feedback
+    return <Loading/>
   }
   const addOrUpdateInquiryApiCall = async () => {
     if (!formValidation()) {
@@ -74,7 +76,6 @@ const AddInquiryForm = ({ isUpdate, id, allbranches }) => {
       return
     }
     const formData = extractDataFeilds($("#addInquiryForm").serializeArray())
-    console.log(formData);
     if (dateValidation(formData.inquiry_date, formData.upcoming_date)) {
       toast.warn('Dates Are in Wrong order !', {
         position: "top-center",
@@ -145,7 +146,7 @@ const AddInquiryForm = ({ isUpdate, id, allbranches }) => {
   const dateValidation = (start, end) => {
     return new Date(start) > new Date(end)
   }
-  if (Object.keys(selectedInquiry).length < 1 && !loading && isUpdate){
+  if (Object.keys(selectedInquiry).length < 1 && isUpdate){
     return( <h2 className='text-secondary'>Not Available</h2> )
   }
   return (<>
@@ -162,9 +163,8 @@ const AddInquiryForm = ({ isUpdate, id, allbranches }) => {
       pauseOnHover
       theme="colored"
     />
-    {loading?<p className='text-primary'>Loading...</p>:null}
     <Head>
-      <title>{loading?"Loading":isUpdate?selectedInquiry.fname+"-Inquiry":"Add New Inquiry"}</title>
+      <title>{isUpdate?selectedInquiry.fname+"-Inquiry":"Add New Inquiry"}</title>
     </Head>
     <form className="form-card" id='addInquiryForm'>
       <div className="row">
@@ -190,28 +190,34 @@ const AddInquiryForm = ({ isUpdate, id, allbranches }) => {
             <div className="col-5 mb-3">
               <div className="form-outline">
                 <label className="form-label" htmlFor="fname">First name<span className="text-danger"> *</span></label>
-                <input type="text" id="fname" name='fname' ref={fnameRef} className="form-control" />
+                <input type="text" id="fname" name='fname'
+                 defaultValue={selectedInquiry?selectedInquiry.fname:null}
+                  className="form-control" />
               </div>
             </div>
 
             <div className="col-5 mb-3">
               <div className="form-outline">
                 <label className="form-label" htmlFor="lname">Last name<span className="text-danger"> *</span></label>
-                <input type="text" id="lname" name='lname' ref={lnameRef} className="form-control" />
+                <input type="text" id="lname" name='lname'
+                  defaultValue={selectedInquiry?selectedInquiry.lname:null}
+                  className="form-control" />
               </div>
             </div>
 
             <div className="col-5 mb-3">
               <div className="form-outline">
                 <label className="form-label" htmlFor="contact">Mobile<span className="text-danger"> *</span></label>
-                <input type="text" id="contact" name='contact' className="form-control" ref={contactRef} />
+                <input type="text" id="contact" name='contact' className="form-control"
+                  defaultValue={selectedInquiry?selectedInquiry.contact:null} />
               </div>
             </div>
 
             <div className="col-5 mb-3">
               <div className="form-outline">
                 <label className="form-label" htmlFor="email">Email<span className="text-danger"> *</span></label>
-                <input type="email" id="email" name='email' ref={emailRef} className="form-control" />
+                <input type="email" id="email" name='email'
+                  defaultValue={selectedInquiry?selectedInquiry.email:null} className="form-control" />
               </div>
             </div>
 
@@ -220,14 +226,18 @@ const AddInquiryForm = ({ isUpdate, id, allbranches }) => {
                 <div><label className="form-label" htmlFor="form6Example2">Reference By<span
                   className="text-danger">*</span></label>
                 </div>
-                <input type="text" id="reference" name='refrence' ref={refrenceRef} className="form-control" />
+                <input type="text" id="reference" name='refrence' 
+                  defaultValue={selectedInquiry?selectedInquiry.refrence:null}
+                 className="form-control" />
               </div>
             </div>
 
             <div className="col-5 mb-3">
               <div className="dropdown mx-0">
                 <div><label className="form-label" htmlFor="form6Example2">Select Branch<span className="text-danger">*</span></label></div>
-                <select className="form-select" aria-label="Default select example" name='branchid' id='branchid' ref={branchRef}>
+                <select className="form-select" aria-label="Default select example" name='branchid' id='branchid' 
+                defaultValue={selectedInquiry?selectedInquiry.branchid:null}
+                >
                   {branches ? branches.length >= 1 ? branches.map((branch) => {
                     return <option value={branch.id} key={branch.id}>{branch.name}</option>
                   }) : null : <option>Loading...</option>}
@@ -237,7 +247,9 @@ const AddInquiryForm = ({ isUpdate, id, allbranches }) => {
 
             <div className="col-5  mb-3">
               <label className="form-label" htmlFor="form6Example2">Inquiry Date<span className="text-danger"> *</span></label>
-              <input type="date" id="inquiry_date" name='inquiry_date' className="form-control" ref={inquiry_date_Ref} />
+              <input type="date" id="inquiry_date" name='inquiry_date' className="form-control"
+              defaultValue={selectedInquiry&&isUpdate?new Date(selectedInquiry.inquiry_date).toISOString().split('T')[0]:null}
+              />
             </div>
 
             <div className="col-5 mb-3">
@@ -246,20 +258,25 @@ const AddInquiryForm = ({ isUpdate, id, allbranches }) => {
               <input type="date" id="upcoming_date" name='upcoming_date' className="form-control"
                 onInput={() => {
                   dateValidation($('#inquiry_date').val(), $('#upcoming_date').val()) ? alert("wrong") : null
-                }} ref={upcoming_date_Ref} />
+                }}
+                 defaultValue={selectedInquiry&&isUpdate?new Date(selectedInquiry.upcoming_date).toISOString().split('T')[0]:null}
+                 />
             </div>
 
             <div className="col-5 mb-3">
               <div className="form-outline">
                 <label className="form-label" htmlFor="form6Example1">Courses<span className="text-danger"> *</span></label>
-                <input type="text" id="course" name='course' className="form-control" ref={coursesRef} />
+                <input type="text" id="course" name='course' className="form-control" 
+                defaultValue={selectedInquiry?selectedInquiry.course:null}  />
               </div>
             </div>
 
             <div className="col-5 mb-3">
               <div className="form-outline">
                 <label className="form-label" htmlFor="form6Example1">Feedback<span className="text-danger"> *</span></label>
-                <textarea type="text" id="feedback" name='feedback' className="form-control" ref={feedbackRef}></textarea>
+                <textarea type="text" id="feedback" name='feedback' className="form-control" 
+                defaultValue={selectedInquiry?selectedInquiry.feedback:null} 
+                ></textarea>
               </div>
             </div>
             <div className="col-5 mb-3">
@@ -270,7 +287,8 @@ const AddInquiryForm = ({ isUpdate, id, allbranches }) => {
                     <span className="text-danger">*</span>
                   </label>
                 </div>
-                <select className="form-select" aria-label="Default select example" name='intrested' id='intrested' ref={intrestedRef}>
+                <select className="form-select" aria-label="Default select example" name='intrested' id='intrested'
+                 defaultValue={selectedInquiry?selectedInquiry.intrested:null} >
                   <option value='yes' >Yes</option>
                   <option value='no' >No</option>
                   <option value='later' >later</option>
@@ -282,7 +300,7 @@ const AddInquiryForm = ({ isUpdate, id, allbranches }) => {
                 <div className="">
                   <button type="button" onClick={addOrUpdateInquiryApiCall} className="btn btn-primary btn-block mb-4"
                    disabled={isUpdate && !(Object.keys(selectedInquiry).length > 0 && !loading)}>
-                  {loading ? "Loading" : isUpdate ? Object.keys(selectedInquiry).length > 0 ? "Update" : "No Inquiry Found" : "Submit"}</button>
+                  { isUpdate ? Object.keys(selectedInquiry).length > 0 ? "Update" : "No Inquiry Found" : "Submit"}</button>
                 </div>
               </div>
             </div>

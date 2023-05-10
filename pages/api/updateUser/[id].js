@@ -3,13 +3,14 @@ const query = require('../dbconnect')
 export default async function handler(req, res) {
     const token = splitToken(req.headers.cookie)
     const isAdmin = await checkCookie(token, "admin");
+    const isManager = await checkCookie(token, "manager");
     let id = parseInt(req.query.id)
   
 
     if (req.method !== 'POST'  || !req.body || !token ||id==null || id==undefined) {
         return res.status(403).json({ message: 'Bad request', ok: false })
     }
-    if ( !isAdmin.verified ) {
+    if ( !isAdmin.verified && !isManager.verified ) {
         return res.status(401).json({ message: 'Not Authenticated', ok: false })
     }
   
@@ -17,7 +18,15 @@ export default async function handler(req, res) {
           const result = await query(`select * from users where id=${id}`)
           if (result.length>0) {
             const { email, password, fname, lname, branchid, role ,contact} = req.body
-
+            console.log(`update users set 
+            email='${email.toString()}',
+            password='${password.toString()}',
+            fname='${fname.toString()}',
+            lname='${lname.toString()}',
+            contact='${contact.toString()}',
+            branchid='${parseInt(branchid)}',
+            role='${role}'
+            where id=${id}`);
             const rowcount = await query(`update users set 
             email='${email.toString()}',
             password='${password.toString()}',

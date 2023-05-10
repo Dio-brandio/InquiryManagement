@@ -4,16 +4,14 @@ import { useEffect, useState, useRef } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import { extractDataFeilds } from '@/middleware';
 import Head from 'next/head';
-const addBranchApi = process.env.API_ROUTE + "addBranch"
-const updateBranchApi = process.env.API_ROUTE + 'updateBranch'
+import Loading from './Loading';
+const addBranchApi = process.env.API_ROUTE + "addBranch";
+const updateBranchApi = process.env.API_ROUTE + 'updateBranch/';
 const AddBranchForm = ({ isUpdate, id }) => {
     const [selectedBranch, setSelectedBranch] = useState({})
     const [loading, setLoading] = useState(isUpdate)
 
-    const nameRef = useRef()
-    const numberRef = useRef()
-    const emailRef = useRef()
-    const addresRef = useRef()
+ 
 
     useEffect(() => {
         if (id != null && id != undefined && isUpdate) {
@@ -34,11 +32,12 @@ const AddBranchForm = ({ isUpdate, id }) => {
         }
 
     }, [id])
-    if (Object.keys(selectedBranch).length > 0 && !loading) {
-        nameRef.current.value = selectedBranch.name
-        numberRef.current.value = Number(selectedBranch.contact)
-        emailRef.current.value = selectedBranch.email
-        addresRef.current.value = selectedBranch.address
+    if (loading) {
+        return <Loading/>
+    }
+  
+    if (Object.keys(selectedBranch).length < 1 && !loading && isUpdate) {
+        return (<h2 className='text-secondary'>Not Available</h2>)
     }
     const addOrUpdateBranchApiCall = async (update) => {
         if (!formValidation()) {
@@ -111,37 +110,52 @@ console.log(updateBranchApi + id);
         }
         return true
     }
-    if (Object.keys(selectedBranch).length < 1 && !loading && isUpdate) {
-        return (<h2 className='text-secondary'>Not Available</h2>)
-    }
+
+    // const nameRef = useRef()
+    // const numberRef = useRef()
+    // const emailRef = useRef()
+    // const addresRef = useRef()
+
+    // if (Object.keys(selectedBranch).length > 0 && !loading) {
+    //     nameRef.current.value = selectedBranch.name
+    //     numberRef.current.value = Number(selectedBranch.contact)
+    //     emailRef.current.value = selectedBranch.email
+    //     addresRef.current.value = selectedBranch.address
+    // }
     return (<>
-        {loading ? <p className='text-primary'>Loading...</p> : null}
         <Head>
-            <title>{loading ? "Loading" : isUpdate ?"Edit-"+selectedBranch.name  : "Add New Branch"}</title>
+            <title>{ isUpdate ?"Edit-"+selectedBranch.name  : "Add New Branch"}</title>
         </Head>
         <form className='row p-4 w-lg-50 w-100 p-4  rounded' id='addBranchForm'>
 
             <div className="form-outline d-flex  text-center mb-4  col-12">
-                <input ref={nameRef} type="text" id="name" className="form-control"
+                <input  type="text" id="name" className="form-control"
                     placeholder="Name" name='name'
+                    defaultValue={selectedBranch?selectedBranch.name:null}
                 />
             </div>
 
             <div className="form-outline d-flex  text-center mb-4  col-12">
-                <input ref={numberRef} type="number" name='contact' id="contact" className="form-control" placeholder="Mobile" />
+                <input 
+                defaultValue={selectedBranch?selectedBranch.contact:null}
+                 type="number" name='contact' id="contact" className="form-control" placeholder="Mobile" />
             </div>
 
             <div className="form-outline d-flex  text-center mb-4  col-12">
-                <input ref={emailRef} type="email" name='email' id="email" className="form-control" placeholder="Branch Email" />
+                <input 
+                 defaultValue={selectedBranch?selectedBranch.email:null}
+                 type="email" name='email' id="email" className="form-control" placeholder="Branch Email" />
             </div>
 
             <div className="form-outline d-flex  text-center mb-4 col-12">
-                <textarea ref={addresRef} className="form-control" name='address' id="address" rows="4" placeholder="Enter Branch Address..."></textarea>
+                <textarea 
+                 defaultValue={selectedBranch?selectedBranch.address:null}
+                 className="form-control" name='address' id="address" rows="4" placeholder="Enter Branch Address..."></textarea>
             </div>
             <div className="form-outline d-flex  justify-content-center col-12 ">
                 <button type="button" onClick={() => { addOrUpdateBranchApiCall(isUpdate) }} className="btn btn-lg btn-primary  btn-block mb-4"
-                    disabled={isUpdate && !(Object.keys(selectedBranch).length > 0 && !loading)}>
-                    {loading ? "Loading" : isUpdate ? Object.keys(selectedBranch).length > 0 ? "Update" : "No Branch Found" : "Submit"}
+                    disabled={isUpdate && !(Object.keys(selectedBranch).length > 0 )}>
+                    { isUpdate ? Object.keys(selectedBranch).length > 0 ? "Update" : "No Branch Found" : "Submit"}
                 </button>
             </div>
         </form>

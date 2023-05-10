@@ -31,6 +31,7 @@ const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
       return
     }
     const formData = extractDataFeilds($("#adduserForm").serializeArray())
+    console.log(update ? updateUserApi + id : addUserApi, formData);
     const res = await axios.post(update ? updateUserApi + id : addUserApi, formData)
     try {
       if (res.data.ok) {
@@ -88,12 +89,12 @@ const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
 
 
   const fethAllUsers = async () => {
-    const { data } = await axios.get(process.env.API_ROUTE + "getAllUsers")
+    const { data } = await axios.get(process.env.API_ROUTE + "getAllUsers?id="+id)
     return data.users[0][0]
   }
   const branchData = useSWR("fetchBranches",allbranches)
   if (isUpdate){
-     userData = useSWR("fetchUsers", fethAllUsers)
+     userData = useSWR(['fetchuser', 'user', id], fethAllUsers,{revalidate:true})
     if (!userData.data) return <><Loading />  <Head><title>Loading...</title></Head></>
     if (userData.error) return <h3>Error:- {userData.error.message}</h3>
 
@@ -188,7 +189,7 @@ const AddUserForm = ({ isUpdate, id, allbranches, isAdmin }) => {
                 <div><label className="form-label" htmlFor="form6Example2">Branch<span className="text-danger">* </span></label>
                 </div>
                 <select className="form-select" aria-label="Default select example" name='branchid' id='branchid'
-                  defaultValue={userData?userData.data.branch:null}
+                  defaultValue={userData?userData.data.branchid:null}
                 >
                   {branchData.data? branchData.data.length >= 1 ? branchData.data.map((branch) => {
                     return <option value={branch.id} key={branch.id}>

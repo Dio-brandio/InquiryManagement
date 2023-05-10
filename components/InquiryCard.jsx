@@ -7,7 +7,7 @@ const InquiryCard = ({item,userPath}) => {
     <div className="bg-white border border-dark-50 rounded px-4 py-1 ">
       <div className="project-box">
         <span className="badge badge-primary">Pending</span>
-        <h4>{item.course.toUpperCase()}</h4>
+        <h4>{item.course.toUpperCase().slice(0,10)} ...</h4>
         <div className="d-flex align-items-center my-3">
           <img className="img-10 me-2 w-25 rounded"
             src="../assets/img/team-1.jpg"
@@ -21,7 +21,7 @@ const InquiryCard = ({item,userPath}) => {
         </div>
         <hr className="hr bg-white" />
         <p>
-          {item.feedback}
+          {item.feedback.slice(0,10)} ...
         </p>
         <div className="row details">
           <div className="col-6">
