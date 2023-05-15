@@ -21,10 +21,7 @@ const AdminAddInquiry = (props) => {
                             </div>
 
                             <div className="card-body p-3 d-flex align-items-center justify-content-center flex-column">
-                               <Suspense 
-                               fallback={<>"Loading..."</>}>
                                 <AddInquiryForm {...props}/>
-                               </Suspense>
                             </div>
                         </div>
                     </div>

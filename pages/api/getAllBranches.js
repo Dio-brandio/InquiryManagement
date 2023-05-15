@@ -22,7 +22,6 @@ export default async function handler(req, res) {
         if (isAdmin.verified) {
                 const branches = await query(`call getAllBranchesByBranchId(${branchId})`)
                 return res.status(200).json({ branches: branches, ok: true })
-          
         }
         if (isManager.verified) {
             const branches = await query(`call getAllBranchesByBranchId(${isManager.data.branchid})`)

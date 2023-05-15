@@ -11,6 +11,7 @@ const InquiryInfo = ({ iid }) => {
         const { data, error } = useSWR("getSingleInquiry", fetchInquiry)
         if (!data) return <Loading />
         if (error) return <h1>Error :- {error.message}</h1>
+        if (data.length<1) return <h1>No Inquires</h1>
         const feilds = Object.keys(data[0])
         const Values = Object.values(data[0])
         return (

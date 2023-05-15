@@ -3,7 +3,7 @@ import React from 'react'
 
 const InquiryCard = ({item,userPath}) => {
   return (
-    <div className=" col-lg-4 col-md-6 inquiry-card  p-3 " key={item.id}>
+    <div className=" col-lg-4 col-md-6 inquiry-card  p-3" key={item.id}>
     <div className="bg-white border border-dark-50 rounded px-4 py-1 ">
       <div className="project-box">
         <span className="badge badge-primary">Pending</span>

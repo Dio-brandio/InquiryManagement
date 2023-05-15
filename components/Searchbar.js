@@ -12,7 +12,12 @@ const Searchbar = () => {
   const toggleNotification = () => {
     $("#notification").toggleClass("show")
   }
-
+const searchInquiry=(e)=>{
+        const value = e.target.value.toLowerCase();
+        $(".inquiry-card").filter(function () {
+            $(this).toggle($(this).text().toLowerCase().includes(value))
+        });
+}
   const logout = () => {
     Cookies.remove("authtoken")
     toast.error('Logging Out', {
@@ -44,7 +49,7 @@ const Searchbar = () => {
             <div className="ms-md-auto pe-md-3 d-flex align-items-center ">
               <div className="input-group my-2 my-sm-2 my-md-0">
                 <span className="input-group-text text-body"><i className="ni ni-atom" ></i></span>
-                <input type="text" className="form-control" placeholder="Type here..." />
+                <input type="text" className="form-control" placeholder="Type here..." onInput={searchInquiry}/>
               </div>
             </div>
             <div className="pe-md-3 d-flex align-items-center  position-relative">

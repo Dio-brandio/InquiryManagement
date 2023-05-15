@@ -15,7 +15,6 @@ const AddBranchForm = ({ isUpdate, id }) => {
 
     useEffect(() => {
         if (id != null && id != undefined && isUpdate) {
-            console.log("use effect");
             const getBranchByIdApi = process.env.API_ROUTE + `getAllBranches?id=${id}`
             const setBranch = async () => {
                 const parse = await fetch(getBranchByIdApi)
