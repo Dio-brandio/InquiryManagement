@@ -13,7 +13,7 @@ export default function AdminHome(props) {
         const data =await axios.get(allInquiresApi)
         return (data.data.inquires[0])
       }
-  const {data,error} =useSWR("allInquies",fetcher,{revalidate:true}) 
+  const {data,error} =useSWR(['fetchInquiry', props.userPath],fetcher,{revalidate:true}) 
   if (error) return(<h3>There is Some Error </h3>)
   
   return (
