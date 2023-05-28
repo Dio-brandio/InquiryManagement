@@ -15,7 +15,12 @@ const Login = () => {
             return
         }
 try {
-    const res = await axios.post(process.env.API_ROUTE+'login', { email, password })
+    const res = await axios.post(process.env.API_ROUTE+'login', { email, password },{
+        mode: "cors",
+        headers: {
+            'Access-Control-Allow-Origin':'*'
+          }
+    })
     if (res.data.ok) {
         Cookies.set("authtoken", res.data.token)
         toast.success('Login In!', {
